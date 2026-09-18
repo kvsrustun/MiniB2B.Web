@@ -1,0 +1,115 @@
+﻿@model MiniB2B.Web.Models.Cart
+@{
+    ViewData["Title"] = "Alışveriş Sepetim";
+    decimal grandTotal = Model.Items.Sum(i => i.Quantity * (i.Product?.Price ?? 0));
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">🛒 Alışveriş Sepeti</h2>
+        <a href="/" class="btn btn-outline-secondary">← Alışverişe Devam Et</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger shadow-sm mb-4">
+            ❌ @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success shadow-sm mb-4">
+            🎉 @TempData["Success"]
+            <div class="mt-2">
+                <a href="/" class="btn btn-sm btn-success">Ürün Listesine Dön</a>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Items.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <h4 class="text-muted">Sepetinizde henüz ürün bulunmuyor.</h4>
+                <p class="text-muted">Katalogdan ürün seçip sepetinize ekleyebilirsiniz.</p>
+                <a href="/" class="btn btn-primary px-4 py-2 mt-2">Kataloğa Git</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Birim Fiyat</th>
+                                    <th style="width: 130px;">Miktar</th>
+                                    <th>Toplam</th>
+                                    <th class="text-end">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    decimal rowTotal = item.Quantity * (item.Product?.Price ?? 0);
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">@item.Product?.Name</div>
+                                            <small class="badge bg-secondary font-monospace">@item.Product?.ProductCode</small>
+                                        </td>
+                                        <td>@item.Product?.Price.ToString("N2") ₺</td>
+                                        <td>
+                                            <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center gap-1">
+                                                <input type="hidden" name="itemId" value="@item.Id" />
+                                                <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product?.StockQuantity" class="form-control form-control-sm text-center" style="width: 70px;" onchange="this.form.submit()" />
+                                            </form>
+                                        </td>
+                                        <td class="fw-bold text-primary">@rowTotal.ToString("N2") ₺</td>
+                                        <td class="text-end">
+                                            <form asp-action="RemoveItem" method="post" class="d-inline">
+                                                <input type="hidden" name="itemId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Sil">🗑️</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Sipariş Özeti</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Ara Toplam:</span>
+                            <span class="fw-semibold">@grandTotal.ToString("N2") ₺</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">KDV (%20):</span>
+                            <span class="fw-semibold">@((grandTotal * 0.20m).ToString("N2")) ₺</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-4 fs-5">
+                            <span class="fw-bold">Genel Toplam:</span>
+                            <span class="fw-bold text-success">@((grandTotal * 1.20m).ToString("N2")) ₺</span>
+                        </div>
+
+                        <form asp-action="Checkout" method="post">
+                            <button type="submit" class="btn btn-success w-100 py-2 fs-5 fw-bold shadow-sm">
+                                ✅ Siparişi Onayla
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

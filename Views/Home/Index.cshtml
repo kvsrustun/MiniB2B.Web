@@ -1,0 +1,204 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.Product>
+@{
+    ViewData["Title"] = "Ürün Kataloğu & Sipariş Girişi";
+    var columns = ViewBag.Columns as List<MiniB2B.Web.Models.GridColumnConfig> ?? new List<MiniB2B.Web.Models.GridColumnConfig>();
+    var brands = ViewBag.Brands as List<string> ?? new List<string>();
+    var categories = ViewBag.Categories as List<MiniB2B.Web.Models.Category> ?? new List<MiniB2B.Web.Models.Category>();
+}
+
+<div class="container-fluid py-4">
+    <!-- Başlık ve Bildirim Alanı -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">📦 Bayi Ürün Kataloğu</h2>
+            <p class="text-muted mb-0">Hızlı arama yapın, stok seviyelerini inceleyin ve doğrudan sepete ekleyin.</p>
+        </div>
+        <div>
+            <a href="/Cart" class="btn btn-primary px-4 py-2 shadow-sm">
+                🛒 Sepete Git
+            </a>
+        </div>
+    </div>
+
+    <!-- Bildirim Mesajı (Alert) -->
+    <div id="alertBox" class="alert d-none shadow-sm" role="alert"></div>
+
+    <!-- Filtreleme & Arama Çubuğu (Ödev 3. Maddesi) -->
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Ürün Adı / Kodu / Marka</label>
+                    <input type="text" name="search" class="form-control" placeholder="Örn: Rulman, PRD-1001, SKF..." value="@ViewBag.CurrentSearch">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Marka</label>
+                    <select name="brand" class="form-select">
+                        <option value="">Tüm Markalar</option>
+                        @foreach (var b in brands)
+                        {
+                            <option value="@b" selected="@(ViewBag.CurrentBrand == b)">@b</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Kategori</label>
+                    <select name="categoryId" class="form-select">
+                        <option value="">Tüm Kategoriler</option>
+                        @foreach (var cat in categories)
+                        {
+                            <option value="@cat.Id" selected="@(ViewBag.CurrentCategoryId == cat.Id)">@cat.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Stok Durumu</label>
+                    <select name="stockFilter" class="form-select">
+                        <option value="">Hepsi</option>
+                        <option value="in_stock" selected="@(ViewBag.CurrentStockFilter == "in_stock")">Stokta Var</option>
+                        <option value="critical" selected="@(ViewBag.CurrentStockFilter == "critical")">⚠️ Kritik Stok</option>
+                        <option value="out_of_stock" selected="@(ViewBag.CurrentStockFilter == "out_of_stock")">Tükendi</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-dark w-100">Filtrele</button>
+                    <a href="/" class="btn btn-outline-secondary">Temizle</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dinamik Tablo (Ödev Sayfa 4: GridColumnConfigs tablosundan beslenir) -->
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        @foreach (var col in columns)
+                        {
+                            <th style="width: @col.Width; text-align: @col.Alignment;">
+                                @col.HeaderTitle
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="@(columns.Count)" class="text-center py-5 text-muted">
+                                <h5>Kriterlere uygun ürün bulunamadı.</h5>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            @foreach (var col in columns)
+                            {
+                                <td style="text-align: @col.Alignment;">
+                                    @switch (col.FieldName)
+                                    {
+                                        case "ImageUrl":
+                                            <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://via.placeholder.com/60" : p.ImageUrl)"
+                                                 alt="@p.Name"
+                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" class="border" />
+                                            break;
+
+                                        case "ProductCode":
+                                            <span class="badge bg-secondary font-monospace">@p.ProductCode</span>
+                                            break;
+
+                                        case "Name":
+                                            <div class="fw-bold">@p.Name</div>
+                                            <small class="text-muted">@(p.Category?.Name ?? "Genel")</small>
+                                            break;
+
+                                        case "Brand":
+                                            <span class="fw-semibold">@p.Brand</span>
+                                            break;
+
+                                        case "StockStatus":
+                                            if (p.StockQuantity == 0)
+                                            {
+                                                <span class="badge bg-danger">Tükendi (0)</span>
+                                            }
+                                            else if (p.StockQuantity <= p.CriticalStockThreshold)
+                                            {
+                                                <span class="badge bg-warning text-dark" title="Kritik Stok Sınırı: @p.CriticalStockThreshold">
+                                                    ⚠️ Kritik: @p.StockQuantity Adet
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Stokta: @p.StockQuantity</span>
+                                            }
+                                            break;
+
+                                        case "Price":
+                                            <span class="fw-bold text-primary fs-5">@p.Price.ToString("N2") ₺</span>
+                                            break;
+
+                                        case "Action":
+                                            if (p.StockQuantity > 0)
+                                            {
+                                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                                    <input type="number" id="qty_@p.Id" value="1" min="1" max="@p.StockQuantity" class="form-control form-control-sm text-center" style="width: 70px;" />
+                                                    <button type="button" onclick="addToCart(@p.Id)" class="btn btn-sm btn-success">
+                                                        Sepete Ekle
+                                                    </button>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-secondary" disabled>Stok Yok</button>
+                                            }
+                                            break;
+
+                                        default:
+                                            <span>-</span>
+                                            break;
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Sepete Ekleme JavaScript Kodu -->
+<script>
+    function addToCart(productId) {
+        const qtyInput = document.getElementById('qty_' + productId);
+        const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
+        const alertBox = document.getElementById('alertBox');
+
+        fetch('/Home/AddToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `productId=${productId}&quantity=${quantity}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            alertBox.classList.remove('d-none', 'alert-success', 'alert-danger');
+            if (data.success) {
+                alertBox.classList.add('alert-success');
+                alertBox.innerText = '✅ ' + data.message;
+            } else {
+                alertBox.classList.add('alert-danger');
+                alertBox.innerText = '❌ ' + data.message;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { alertBox.classList.add('d-none'); }, 4000);
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Bir hata oluştu!');
+        });
+    }
+</script>

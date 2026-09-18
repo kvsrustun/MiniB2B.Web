@@ -1,0 +1,75 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.Order>
+@{
+    ViewData["Title"] = "Geçmiş Siparişlerim";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">📦 Geçmiş Siparişlerim</h2>
+            <p class="text-muted mb-0">Verdiğiniz tüm toptan siparişler ve teslimat durumları.</p>
+        </div>
+        <a href="/" class="btn btn-primary">🛍️ Yeni Sipariş Ver</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <h5 class="text-muted">Henüz verilmiş bir siparişiniz bulunmuyor.</h5>
+            <p class="text-muted small">Ürün kataloğundan dilediğiniz ürünleri sepete ekleyip hemen sipariş oluşturabilirsiniz.</p>
+            <div>
+                <a href="/" class="btn btn-outline-primary mt-2">Kataloğa Git</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var order in Model)
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <span class="fw-bold font-monospace fs-5 text-primary">@order.OrderNumber</span>
+                            <span class="badge bg-success ms-2">@order.Status</span>
+                        </div>
+                        <div class="text-muted small">
+                            📅 Sipariş Tarihi: @order.OrderDate.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr class="text-muted">
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Miktar</th>
+                                    <th class="text-end">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in order.Items)
+                                {
+                                    <tr>
+                                        <td><code>@item.ProductCodeSnapshot</code></td>
+                                        <td class="fw-semibold">@item.ProductNameSnapshot</td>
+                                        <td>@item.UnitPriceSnapshot.ToString("N2") ₺</td>
+                                        <td>@item.Quantity Adet</td>
+                                        <td class="text-end fw-bold">@item.TotalPrice.ToString("N2") ₺</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end fw-bold fs-5">Toplam Tutar:</td>
+                                    <td class="text-end fw-bold fs-5 text-success">@order.TotalAmount.ToString("N2") ₺</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

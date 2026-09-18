@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Sisteme Giriş";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white text-center py-4">
+                    <h3 class="fw-bold mb-1">🏢 Mini B2B Portalı</h3>
+                    <p class="text-white-50 small mb-0">Lütfen kullanıcı bilgilerinizle giriş yapın</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger shadow-sm mb-4">
+                            ❌ @ViewBag.Error
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Login">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Kullanıcı Adı</label>
+                            <input type="text" name="username" class="form-control form-control-lg" placeholder="admin veya bayi1" required autofocus />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Şifre</label>
+                            <input type="password" name="password" class="form-control form-control-lg" placeholder="••••••" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                            Giriş Yap
+                        </button>
+                    </form>
+
+                    <div class="mt-4 p-3 bg-light rounded-3 small text-muted border">
+                        <div class="fw-bold text-dark mb-1">💡 Demo Giriş Bilgileri:</div>
+                        <div><strong>Admin:</strong> Kullanıcı: <code>admin</code> | Şifre: <code>123456</code></div>
+                        <div><strong>Bayi:</strong> Kullanıcı: <code>bayi1</code> | Şifre: <code>123456</code></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

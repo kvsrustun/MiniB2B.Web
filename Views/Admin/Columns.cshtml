@@ -1,0 +1,80 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.GridColumnConfig>
+@{
+    ViewData["Title"] = "Dinamik Grid Kolon Ayarları";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">🎛️ Dinamik Grid Kolon Yönetimi</h2>
+            <p class="text-muted mb-0">Bayi ekranında hangi kolonun görüneceğini, sırasını ve hizasını buradan canlı olarak yönetin.</p>
+        </div>
+        <a href="/Admin" class="btn btn-outline-secondary">← Panele Dön</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Alan Adı (DB)</th>
+                        <th>Görünen Başlık</th>
+                        <th>Sıra</th>
+                        <th>Hizalama</th>
+                        <th>Tip</th>
+                        <th class="text-center">Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var col in Model)
+                    {
+                        <tr>
+                            <td><code>@col.FieldName</code></td>
+                            <td colspan="3">
+                                <form asp-action="UpdateColumn" method="post" class="row g-2 align-items-center">
+                                    <input type="hidden" name="id" value="@col.Id" />
+                                    <div class="col-auto">
+                                        <input type="text" name="headerTitle" value="@col.HeaderTitle" class="form-control form-control-sm" style="width: 140px;" title="Başlık" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="number" name="displayOrder" value="@col.DisplayOrder" class="form-control form-control-sm text-center" style="width: 70px;" title="Görüntüleme Sırası" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <select name="alignment" class="form-select form-select-sm" style="width: 100px;">
+                                            <option value="left" selected="@(col.Alignment == "left")">Sola</option>
+                                            <option value="center" selected="@(col.Alignment == "center")">Ortala</option>
+                                            <option value="right" selected="@(col.Alignment == "right")">Sağa</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Kaydet</button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@col.RenderType</span></td>
+                            <td class="text-center">
+                                @if (col.IsVisible)
+                                {
+                                    <span class="badge bg-success">Görünür</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Gizli</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <form asp-action="ToggleColumn" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@col.Id" />
+                                    <button type="submit" class="btn btn-sm @(col.IsVisible ? "btn-warning" : "btn-success")">
+                                        @(col.IsVisible ? "Gizle" : "Göster")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
