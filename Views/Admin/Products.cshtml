@@ -1,0 +1,77 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.Product>
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">📦 Ürün ve Katalog Yönetimi</h2>
+            <p class="text-muted mb-0">Tüm ürünleri listeleyin, yeni ürün ekleyin veya fiyat/stok düzenleyin.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/Admin/CreateProduct" class="btn btn-success fw-bold">➕ Yeni Ürün Ekle</a>
+            <a href="/Admin" class="btn btn-outline-secondary">← Panele Dön</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success shadow-sm mb-4">
+            ✅ @TempData["Success"]
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Görsel</th>
+                        <th>Ürün Kodu</th>
+                        <th>Ürün Adı</th>
+                        <th>Kategori</th>
+                        <th>Marka</th>
+                        <th>Fiyat</th>
+                        <th>Stok</th>
+                        <th>Kritik Eşik</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://via.placeholder.com/50" : p.ImageUrl)" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px;" />
+                            </td>
+                            <td><span class="badge bg-secondary font-monospace">@p.ProductCode</span></td>
+                            <td class="fw-semibold">@p.Name</td>
+                            <td>@(p.Category?.Name ?? "-")</td>
+                            <td>@p.Brand</td>
+                            <td class="fw-bold text-primary">@p.Price.ToString("N2") ₺</td>
+                            <td>
+                                @if (p.StockQuantity == 0)
+                                {
+                                    <span class="badge bg-danger">0 (Tükendi)</span>
+                                }
+                                else if (p.StockQuantity <= p.CriticalStockThreshold)
+                                {
+                                    <span class="badge bg-warning text-dark">@p.StockQuantity (Kritik)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@p.StockQuantity</span>
+                                }
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@p.CriticalStockThreshold</span></td>
+                            <td class="text-end">
+                                <a href="/Admin/EditProduct/@p.Id" class="btn btn-sm btn-outline-primary">✏️ Düzenle</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

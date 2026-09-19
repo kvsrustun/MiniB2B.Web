@@ -4,31 +4,40 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="card-header bg-dark text-white text-center py-4">
-                    <h3 class="fw-bold mb-1">🏢 Mini B2B Portalı</h3>
-                    <p class="text-white-50 small mb-0">Lütfen kullanıcı bilgilerinizle giriş yapın</p>
+        <div class="col-11 col-sm-8 col-md-5 col-lg-4">
+            <div class="card border-0 shadow rounded-4 overflow-hidden">
+                <div class="bg-dark text-white p-4 text-center">
+                    <h4 class="fw-bold mb-1">🏢 Mini B2B Portal</h4>
+                    <small class="text-white-50">Güvenli Bayi ve Yönetici Girişi</small>
                 </div>
-                <div class="card-body p-4 p-md-5">
+
+                <div class="p-4">
                     @if (ViewBag.Error != null)
                     {
-                        <div class="alert alert-danger shadow-sm mb-4">
-                            ❌ @ViewBag.Error
+                        <div class="alert alert-danger py-2 small shadow-sm mb-3">
+                            ⚠️ @ViewBag.Error
                         </div>
                     }
 
                     <form method="post" asp-action="Login">
-                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
-                        
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
+
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Kullanıcı Adı</label>
-                            <input type="text" name="username" class="form-control form-control-lg" placeholder="admin veya bayi1" required autofocus />
+                            <label class="form-label fw-semibold small text-secondary">Kullanıcı Adı</label>
+                            <input type="text" name="username" class="form-control form-control-lg fs-6" placeholder="Kullanıcı adınızı girin" required autofocus />
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Şifre</label>
-                            <input type="password" name="password" class="form-control form-control-lg" placeholder="••••••" required />
+                            <label class="form-label fw-semibold small text-secondary">Şifre</label>
+                            <div class="input-group">
+                                <input type="password" id="loginPassword" name="password" class="form-control form-control-lg fs-6 border-end-0" placeholder="Şifrenizi girin" required />
+                                <button type="button" class="btn btn-outline-secondary bg-white border-start-0 text-muted" onclick="togglePassword('loginPassword', this)" title="Şifreyi Göster/Gizle" style="border-color: #ced4da;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
@@ -36,13 +45,43 @@
                         </button>
                     </form>
 
-                    <div class="mt-4 p-3 bg-light rounded-3 small text-muted border">
-                        <div class="fw-bold text-dark mb-1">💡 Demo Giriş Bilgileri:</div>
-                        <div><strong>Admin:</strong> Kullanıcı: <code>admin</code> | Şifre: <code>123456</code></div>
-                        <div><strong>Bayi:</strong> Kullanıcı: <code>bayi1</code> | Şifre: <code>123456</code></div>
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <small class="text-muted">Henüz bayimiz değil misiniz?</small>
+                        <div>
+                            <a href="/Account/Register" class="fw-bold text-decoration-none small text-primary">
+                                Yeni Bayi Başvurusu Yap 📝
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const eyeOpen = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+        </svg>`;
+
+        const eyeClosed = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
+            <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+            <path d="M11.297 9.124a3.5 3.5 0 0 0-4.42-4.42l1.409 1.408a2.5 2.5 0 0 1 3.011 3.012l1.001 1.002z"/>
+            <path d="M4.195 4.195A8 8 0 0 0 0 8s3 5.5 8 5.5a7 7 0 0 0 4.205-1.411l-1.16-1.16A6 6 0 0 1 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8q.086-.13.195-.288c.335-.48.83-1.12 1.465-1.755q.247-.248.517-.486l-1.02-1.02-1.16-1.16z"/>
+            <path d="M13.646 14.354l-12-12 .708-.708 12 12z"/>
+        </svg>`;
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = eyeClosed;
+            } else {
+                input.type = 'password';
+                btn.innerHTML = eyeOpen;
+            }
+        }
+    </script>
+}

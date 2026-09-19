@@ -1,0 +1,124 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.Banner>
+@{
+    ViewData["Title"] = "İlan ve Slider Yönetimi";
+}
+
+<div class="container-fluid py-4 px-4" style="max-width: 1400px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">📢 Kampanya & Reklam Slider Yönetimi</h3>
+            <p class="text-secondary mb-0 small">Bayi ana sayfasındaki kampanya ve duyuru ilanlarını ekleyin veya düzenleyin.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/Admin/CreateBanner" class="btn btn-success fw-semibold px-3 shadow-xs">➕ Yeni İlan Ekle</a>
+            <a href="/Admin" class="btn btn-outline-secondary px-3">← Panele Dön</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success border-0 bg-success bg-opacity-10 text-success py-2 px-3 small rounded-3 mb-4">
+            ✅ @TempData["Success"]
+        </div>
+    }
+
+    <div class="card border bg-white shadow-xs rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white small">
+                    <tr>
+                        <th style="width: 220px;">Önizleme</th>
+                        <th>Rozet</th>
+                        <th>Başlık</th>
+                        <th>Açıklama</th>
+                        <th class="text-center" style="width: 80px;">Sıra</th>
+                        <th class="text-center" style="width: 110px;">Durum</th>
+                        <th class="text-end" style="width: 240px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                Henüz hiçbir kampanya ilanı eklenmemiş.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="rounded-3 p-2 text-white shadow-xs" style="background: @b.BackgroundGradient; min-height: 55px; font-size: 0.8rem;">
+                                    <span class="badge bg-@b.BadgeColor text-dark py-0 px-1 mb-1" style="font-size: 0.65rem;">@b.BadgeText</span>
+                                    <div class="fw-bold text-truncate" style="max-width: 200px;">@b.Title</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-@b.BadgeColor text-dark text-uppercase">@b.BadgeText</span>
+                            </td>
+                            <td class="fw-semibold text-dark">@b.Title</td>
+                            <td class="text-secondary small">@b.Description</td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border font-monospace">@b.DisplayOrder</span>
+                            </td>
+                            <td class="text-center">
+                                @if (b.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">Yayında</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border px-2 py-1">Gizli</span>
+                                }
+                            </td>
+                            <!-- 🎯 KUTULARIN HEPSİ AYNI YÜKSEKLİKTE, TEK SATIRDA VE AYNI HİZADA -->
+                            <td class="text-end">
+                                <div class="d-inline-flex align-items-center justify-content-end gap-1">
+                                    <!-- 1. Düzenle Butonu -->
+                                    <a href="/Admin/EditBanner/@b.Id" 
+                                       class="btn btn-sm btn-outline-primary action-btn d-inline-flex align-items-center justify-content-center text-nowrap" 
+                                       title="Düzenle">
+                                        ✏️ Düzenle
+                                    </a>
+
+                                    <!-- 2. Gizle / Yayınla Butonu -->
+                                    <form method="post" asp-action="ToggleBanner" class="d-inline m-0">
+                                        <input type="hidden" name="id" value="@b.Id" />
+                                        <button type="submit" 
+                                                class="btn btn-sm @(b.IsActive ? "btn-outline-secondary" : "btn-outline-success") action-btn d-inline-flex align-items-center justify-content-center text-nowrap">
+                                            @(b.IsActive ? "Gizle" : "Yayınla")
+                                        </button>
+                                    </form>
+
+                                    <!-- 3. Sil Butonu -->
+                                    <form method="post" asp-action="DeleteBanner" class="d-inline m-0" onsubmit="return confirm('Bu ilanı silmek istediğinizden emin misiniz?');">
+                                        <input type="hidden" name="id" value="@b.Id" />
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger action-btn d-inline-flex align-items-center justify-content-center text-nowrap" 
+                                                title="Sil">
+                                            🗑️ Sil
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 🎯 Tüm butonları cetvelle çizilmiş gibi tam olarak aynı boyutta ve hizada tutan kural */
+    .action-btn {
+        height: 34px !important;
+        line-height: 1 !important;
+        font-size: 0.82rem !important;
+        font-weight: 500 !important;
+        padding: 0 12px !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
+    }
+</style>

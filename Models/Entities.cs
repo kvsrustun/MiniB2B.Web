@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniB2B.Web.Models
 {
-    // Kullanıcı Modeli
     public class User
     {
         public int Id { get; set; }
@@ -12,13 +11,12 @@ namespace MiniB2B.Web.Models
         public string PasswordHash { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public string? Phone { get; set; }
-        public string Role { get; set; } = "Dealer"; // "Admin" veya "Dealer"
+        public string? PhoneNumber { get; set; }
+        public string Role { get; set; } = "Dealer"; 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool IsActive { get; set; } = true;
     }
 
-    // Kategori Modeli
     public class Category
     {
         public int Id { get; set; }
@@ -27,7 +25,6 @@ namespace MiniB2B.Web.Models
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 
-    // Ürün Modeli (Ödev gereksinimleri: Kod, Ad, Marka, Özel Kodlar, Stok, Kritik Eşik vb.)
     public class Product
     {
         public int Id { get; set; }
@@ -52,20 +49,18 @@ namespace MiniB2B.Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
-    // Dinamik Grid Kolon Konfigürasyonu (Ödev Sayfa 4-5)
     public class GridColumnConfig
     {
         public int Id { get; set; }
         public string FieldName { get; set; } = string.Empty;
         public string HeaderTitle { get; set; } = string.Empty;
         public int DisplayOrder { get; set; }
-        public string RenderType { get; set; } = "Text"; // Image, Text, StockBadge, Price, ActionCart
+        public string RenderType { get; set; } = "Text"; 
         public string Width { get; set; } = "auto";
         public bool IsVisible { get; set; } = true;
         public string Alignment { get; set; } = "left";
     }
 
-    // Sepet Kalemi
     public class CartItem
     {
         public int Id { get; set; }
@@ -76,7 +71,6 @@ namespace MiniB2B.Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
-    // Sepet
     public class Cart
     {
         public int Id { get; set; }
@@ -85,7 +79,6 @@ namespace MiniB2B.Web.Models
         public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
     }
 
-    // Sipariş
     public class Order
     {
         public int Id { get; set; }
@@ -101,7 +94,6 @@ namespace MiniB2B.Web.Models
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 
-    // Sipariş Kalemi (Snapshot Kuralı: Sipariş anındaki fiyatı saklar)
     public class OrderItem
     {
         public int Id { get; set; }

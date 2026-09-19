@@ -1,0 +1,85 @@
+﻿@model MiniB2B.Web.Models.Banner
+@{
+    ViewData["Title"] = "Kampanya İlanını Düzenle";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">✏️ Kampanya İlanını Düzenle</h3>
+                    <p class="text-secondary mb-0 small">İlan başlığını, görselini, sırasını veya renklerini güncelleyin.</p>
+                </div>
+                <a href="/Admin/Banners" class="btn btn-outline-secondary">← Listeye Dön</a>
+            </div>
+
+            <div class="card border bg-white shadow-xs p-4 rounded-3">
+                <form method="post" asp-action="EditBanner">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small text-secondary">Kampanya Başlığı *</label>
+                            <input type="text" name="Title" class="form-control" value="@Model.Title" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small text-secondary">Gösterim Sırası</label>
+                            <input type="number" name="DisplayOrder" class="form-control" value="@Model.DisplayOrder" min="1" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-secondary">Kampanya Açıklaması</label>
+                            <textarea name="Description" class="form-control" rows="2">@Model.Description</textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-secondary">Üst Rozet Metni</label>
+                            <input type="text" name="BadgeText" class="form-control" value="@Model.BadgeText" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-secondary">Rozet Rengi</label>
+                            <select name="BadgeColor" class="form-select">
+                                <option value="warning" selected="@(Model.BadgeColor == "warning")">Sarı (Warning)</option>
+                                <option value="success" selected="@(Model.BadgeColor == "success")">Yeşil (Success)</option>
+                                <option value="danger" selected="@(Model.BadgeColor == "danger")">Kırmızı (Danger)</option>
+                                <option value="info" selected="@(Model.BadgeColor == "info")">Mavi (Info)</option>
+                                <option value="dark" selected="@(Model.BadgeColor == "dark")">Siyah (Dark)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-secondary">Arka Plan Rengi / Gradyan (CSS)</label>
+                            <select name="BackgroundGradient" class="form-select">
+                                <option value="linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)" selected="@(Model.BackgroundGradient.Contains("#1e3c72"))">Mavi Gece (Klasik Kurumsal)</option>
+                                <option value="linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)" selected="@(Model.BackgroundGradient.Contains("#0f2027"))">Zümrüt Koyu Yeşil</option>
+                                <option value="linear-gradient(135deg, #b92b27 0%, #1565C0 100%)" selected="@(Model.BackgroundGradient.Contains("#b92b27"))">Alev Kırmızısı - Mavi</option>
+                                <option value="linear-gradient(135deg, #373b44 0%, #4286f4 100%)" selected="@(Model.BackgroundGradient.Contains("#373b44"))">Metalik Antrasit</option>
+                                <option value="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)" selected="@(Model.BackgroundGradient.Contains("#11998e"))">Canlı Doğa Yeşili</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-secondary">Kampanya / Ürün Görsel Linki (Resim URL)</label>
+                            <input type="url" name="ImageUrl" class="form-control" value="@Model.ImageUrl" placeholder="https://images.unsplash.com/..." />
+                            <small class="text-muted">Afişin sağında gösterilecek ürün/kampanya görseli.</small>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="isActiveCheck" @(Model.IsActive ? "checked" : "") />
+                                <label class="form-check-label fw-semibold small" for="isActiveCheck">Bu ilan yayında olsun (Aktif)</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-xs">
+                                💾 Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

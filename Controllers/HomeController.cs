@@ -14,34 +14,36 @@ namespace MiniB2B.Web.Controllers
             _context = context;
         }
 
-        // Ana Sayfa: Ürün Listesi, Arama, Filtreleme ve Dinamik Kolonlar
         public async Task<IActionResult> Index(string? search, string? brand, string? stockFilter, int? categoryId)
         {
-            // 1. Dinamik Grid Kolon Konfigürasyonunu Çek (Görünür olanlar ve sıralı)
+            ViewBag.Banners = await _context.Banners.Where(b => b.IsActive).OrderBy(b => b.DisplayOrder).ToListAsync();
+
             var columns = await _context.GridColumnConfigs
                 .Where(c => c.IsVisible)
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();
 
-            // 2. Ürün Sorgusu Hazırla
             var query = _context.Products.Include(p => p.Category).Where(p => p.IsActive);
 
-            // Arama filtresi (Kod, Ad, Marka)
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var term = search.Trim().ToLower();
-                query = query.Where(p => p.Name.ToLower().Contains(term)
-                                      || p.ProductCode.ToLower().Contains(term)
-                                      || p.Brand.ToLower().Contains(term));
+                search = search.Trim().ToLower();
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(search) ||
+                    p.ProductCode.ToLower().Contains(search) ||
+                    (p.Brand != null && p.Brand.ToLower().Contains(search)) ||
+                    (p.Description != null && p.Description.ToLower().Contains(search)) ||
+                    (p.ManufacturerCode != null && p.ManufacturerCode.ToLower().Contains(search)) ||
+                    (p.SpecialCode1 != null && p.SpecialCode1.ToLower().Contains(search)) ||
+                    (p.SpecialCode2 != null && p.SpecialCode2.ToLower().Contains(search))
+                );
             }
 
-            // Marka filtresi
             if (!string.IsNullOrWhiteSpace(brand))
             {
                 query = query.Where(p => p.Brand == brand);
             }
 
-            // Stok Durumu Filtresi (Hepsi / Stokta Var / Kritik Stok / Stokta Yok)
             if (!string.IsNullOrWhiteSpace(stockFilter))
             {
                 if (stockFilter == "in_stock")
@@ -52,7 +54,6 @@ namespace MiniB2B.Web.Controllers
                     query = query.Where(p => p.StockQuantity == 0);
             }
 
-            // Kategori Filtresi
             if (categoryId.HasValue && categoryId.Value > 0)
             {
                 query = query.Where(p => p.CategoryId == categoryId.Value);
@@ -60,7 +61,6 @@ namespace MiniB2B.Web.Controllers
 
             var products = await query.ToListAsync();
 
-            // Filtre dropdown'ları için listeler
             ViewBag.Brands = await _context.Products.Select(p => p.Brand).Distinct().ToListAsync();
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             ViewBag.Columns = columns;
@@ -72,7 +72,6 @@ namespace MiniB2B.Web.Controllers
             return View(products);
         }
 
-        // Sepete Hızlı Ekleme (AJAX / Form)
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
@@ -89,8 +88,7 @@ namespace MiniB2B.Web.Controllers
                 return Json(new { success = false, message = $"Yetersiz stok! En fazla {product.StockQuantity} adet sipariş verebilirsiniz." });
             }
 
-            // Basitlik ve demo için 1 numaralı kullanıcı sepeti (Bayi)
-            int userId = HttpContext.Session.GetInt32("UserId") ?? 2; // Varsayılan: Bayi 1
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 2;
 
             var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.UserId == userId);
             if (cart == null)
@@ -119,7 +117,11 @@ namespace MiniB2B.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return Json(new { success = true, message = $"{product.Name} başarıyla sepete eklendi!" });
+            
+            int cartCount = cart.Items.Count;
+            HttpContext.Session.SetInt32("CartCount", cartCount);
+
+            return Json(new { success = true, message = $"{product.Name} başarıyla sepete eklendi!", cartCount = cartCount });
         }
     }
 }

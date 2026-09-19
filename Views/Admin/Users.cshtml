@@ -1,0 +1,63 @@
+﻿@model IEnumerable<MiniB2B.Web.Models.User>
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">👥 Kullanıcı & Bayi Yönetimi</h2>
+            <p class="text-muted mb-0">Kayıtlı kullanıcıları görüntüleyin, yetkilerini ve bilgilerini düzenleyin.</p>
+        </div>
+        <a href="/Admin" class="btn btn-outline-secondary">← Panele Dön</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success shadow-sm mb-4">
+            ✅ @TempData["Success"]
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Ad Soyad</th>
+                        <th>E-Posta</th>
+                        <th>Telefon</th>
+                        <th>Rol</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td>#@u.Id</td>
+                            <td class="fw-bold text-primary font-monospace">@u.Username</td>
+                            <td>@u.FirstName @u.LastName</td>
+                            <td>@u.Email</td>
+                            <td>@(string.IsNullOrEmpty(u.PhoneNumber) ? "-" : u.PhoneNumber)</td>
+                            <td>
+                                <span class="badge @(u.Role == "Admin" ? "bg-dark text-white" : "bg-primary text-white") px-2 py-1">@u.Role</span>
+                            </td>
+                            <td>
+                                <span class="badge @(u.IsActive ? "bg-success" : "bg-danger")">
+                                    @(u.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="/Admin/EditUser/@u.Id" class="btn btn-sm btn-outline-primary">✏️ Düzenle</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -6,34 +6,74 @@
     var categories = ViewBag.Categories as List<MiniB2B.Web.Models.Category> ?? new List<MiniB2B.Web.Models.Category>();
 }
 
-<div class="container-fluid py-4">
-    <!-- Başlık ve Bildirim Alanı -->
+<div class="container-fluid py-4 px-4" style="max-width: 1400px;">
+
+    @{
+        var banners = ViewBag.Banners as List<MiniB2B.Web.Models.Banner> ?? new List<MiniB2B.Web.Models.Banner>();
+    }
+    @if (banners.Any())
+    {
+        <div id="b2bCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden mb-4" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                @for (int i = 0; i < banners.Count; i++)
+                {
+                    <button type="button" data-bs-target="#b2bCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                }
+            </div>
+            <div class="carousel-inner" style="min-height: 220px;">
+                @for (int i = 0; i < banners.Count; i++)
+                {
+                    var b = banners[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")" style="background: @b.BackgroundGradient;">
+                        <div class="container py-4 px-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-7 text-white py-2 text-center text-md-start">
+                                    <span class="badge bg-@b.BadgeColor text-dark mb-2 px-3 py-2 fw-bold text-uppercase">
+                                        @b.BadgeText
+                                    </span>
+                                    <h2 class="fw-bold mb-2 display-6">@b.Title</h2>
+                                    <p class="mb-3 text-light opacity-75 fs-5">@b.Description</p>
+                                </div>
+                                <div class="col-md-5 text-center">
+                                    @if (!string.IsNullOrEmpty(b.ImageUrl))
+                                    {
+                                        <img src="@b.ImageUrl" alt="@b.Title" class="img-fluid rounded-4 shadow-lg border border-2 border-white border-opacity-25" style="max-height: 180px; object-fit: cover; width: 80%;" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#b2bCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#b2bCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    }
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">📦 Bayi Ürün Kataloğu</h2>
-            <p class="text-muted mb-0">Hızlı arama yapın, stok seviyelerini inceleyin ve doğrudan sepete ekleyin.</p>
+            <h3 class="fw-bold mb-1">📦 Bayi Ürün Kataloğu</h3>
+            <p class="text-secondary mb-0 small">Hızlı arama yapın, stok seviyelerini inceleyin ve doğrudan sepete ekleyin.</p>
         </div>
-        <div>
-            <a href="/Cart" class="btn btn-primary px-4 py-2 shadow-sm">
-                🛒 Sepete Git
-            </a>
-        </div>
+        <a href="/Cart" class="btn btn-primary px-4 py-2 shadow-xs fw-semibold">
+            🛒 Sepete Git
+        </a>
     </div>
 
-    <!-- Bildirim Mesajı (Alert) -->
-    <div id="alertBox" class="alert d-none shadow-sm" role="alert"></div>
-
-    <!-- Filtreleme & Arama Çubuğu (Ödev 3. Maddesi) -->
-    <div class="card shadow-sm border-0 mb-4 bg-light">
-        <div class="card-body">
-            <form method="get" class="row g-3 align-items-end">
+    <div class="card shadow-xs border bg-white rounded-3 mb-4">
+        <div class="card-body p-3">
+            <form method="get" class="row g-2 align-items-end">
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">Ürün Adı / Kodu / Marka</label>
-                    <input type="text" name="search" class="form-control" placeholder="Örn: Rulman, PRD-1001, SKF..." value="@ViewBag.CurrentSearch">
+                    <label class="form-label fw-semibold small text-secondary">Arama (Ad, Kod, Açıklama, Özel Kodlar)</label>
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Örn: PRD-1001, Rulman, Özel Kod..." value="@ViewBag.CurrentSearch">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold">Marka</label>
-                    <select name="brand" class="form-select">
+                    <label class="form-label fw-semibold small text-secondary">Marka</label>
+                    <select name="brand" class="form-select form-select-sm">
                         <option value="">Tüm Markalar</option>
                         @foreach (var b in brands)
                         {
@@ -42,8 +82,8 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold">Kategori</label>
-                    <select name="categoryId" class="form-select">
+                    <label class="form-label fw-semibold small text-secondary">Kategori</label>
+                    <select name="categoryId" class="form-select form-select-sm">
                         <option value="">Tüm Kategoriler</option>
                         @foreach (var cat in categories)
                         {
@@ -52,27 +92,26 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label fw-semibold">Stok Durumu</label>
-                    <select name="stockFilter" class="form-select">
+                    <label class="form-label fw-semibold small text-secondary">Stok Durumu</label>
+                    <select name="stockFilter" class="form-select form-select-sm">
                         <option value="">Hepsi</option>
                         <option value="in_stock" selected="@(ViewBag.CurrentStockFilter == "in_stock")">Stokta Var</option>
                         <option value="critical" selected="@(ViewBag.CurrentStockFilter == "critical")">⚠️ Kritik Stok</option>
                         <option value="out_of_stock" selected="@(ViewBag.CurrentStockFilter == "out_of_stock")">Tükendi</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-dark w-100">Filtrele</button>
-                    <a href="/" class="btn btn-outline-secondary">Temizle</a>
+                <div class="col-md-2 d-flex gap-1">
+                    <button type="submit" class="btn btn-sm btn-dark w-100 fw-semibold">Filtrele</button>
+                    <a href="/" class="btn btn-sm btn-outline-secondary">Temizle</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Dinamik Tablo (Ödev Sayfa 4: GridColumnConfigs tablosundan beslenir) -->
-    <div class="card shadow-sm border-0">
+    <div class="card border bg-white shadow-xs rounded-3 overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+                <thead class="bg-dark text-white small">
                     <tr>
                         @foreach (var col in columns)
                         {
@@ -87,7 +126,7 @@
                     {
                         <tr>
                             <td colspan="@(columns.Count)" class="text-center py-5 text-muted">
-                                <h5>Kriterlere uygun ürün bulunamadı.</h5>
+                                Kriterlere uygun ürün bulunamadı.
                             </td>
                         </tr>
                     }
@@ -102,56 +141,66 @@
                                         case "ImageUrl":
                                             <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://via.placeholder.com/60" : p.ImageUrl)"
                                                  alt="@p.Name"
-                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" class="border" />
+                                                 style="width: 44px; height: 44px; object-fit: cover;" class="rounded border" />
                                             break;
 
                                         case "ProductCode":
-                                            <span class="badge bg-secondary font-monospace">@p.ProductCode</span>
+                                            <span class="badge bg-light text-dark border font-monospace">@p.ProductCode</span>
                                             break;
 
                                         case "Name":
-                                            <div class="fw-bold">@p.Name</div>
-                                            <small class="text-muted">@(p.Category?.Name ?? "Genel")</small>
+                                            <!-- 🎯 ŞARTNAME MADDE 6: ÜRÜN DETAYI POPUP AÇMA BUTONU -->
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div>
+                                                    <a href="javascript:void(0)" onclick="openProductModal('@p.Id', '@p.Name', '@p.ProductCode', '@(p.Brand ?? "-")', '@(p.Category?.Name ?? "-")', '@p.Price.ToString("N2")', '@p.StockQuantity', '@(p.Description ?? "Açıklama bulunmuyor.")', '@(p.ManufacturerCode ?? "-")', '@(p.SpecialCode1 ?? "-")', '@(p.SpecialCode2 ?? "-")', '@(p.ImageUrl ?? "")')" class="text-decoration-none fw-bold text-dark hover-primary">
+                                                        @p.Name
+                                                    </a>
+                                                    <div class="text-muted small">@(p.Category?.Name ?? "Genel")</div>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-light border py-0 px-1 text-secondary" title="Ürün Detayı Gör" onclick="openProductModal('@p.Id', '@p.Name', '@p.ProductCode', '@(p.Brand ?? "-")', '@(p.Category?.Name ?? "-")', '@p.Price.ToString("N2")', '@p.StockQuantity', '@(p.Description ?? "Açıklama bulunmuyor.")', '@(p.ManufacturerCode ?? "-")', '@(p.SpecialCode1 ?? "-")', '@(p.SpecialCode2 ?? "-")', '@(p.ImageUrl ?? "")')">
+                                                    🔍
+                                                </button>
+                                            </div>
                                             break;
 
                                         case "Brand":
-                                            <span class="fw-semibold">@p.Brand</span>
+                                            <span class="fw-medium">@(p.Brand ?? "-")</span>
                                             break;
 
                                         case "StockStatus":
                                             if (p.StockQuantity == 0)
                                             {
-                                                <span class="badge bg-danger">Tükendi (0)</span>
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">Tükendi (0)</span>
                                             }
                                             else if (p.StockQuantity <= p.CriticalStockThreshold)
                                             {
-                                                <span class="badge bg-warning text-dark" title="Kritik Stok Sınırı: @p.CriticalStockThreshold">
-                                                    ⚠️ Kritik: @p.StockQuantity Adet
+                                                <span class="badge bg-warning bg-opacity-10 text-warning-emphasis border border-warning border-opacity-25 px-2 py-1" title="Kritik Stok Sınırı: @p.CriticalStockThreshold">
+                                                    ⚠️ Kritik: @p.StockQuantity
                                                 </span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-success">Stokta: @p.StockQuantity</span>
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">Stokta: @p.StockQuantity</span>
                                             }
                                             break;
 
                                         case "Price":
-                                            <span class="fw-bold text-primary fs-5">@p.Price.ToString("N2") ₺</span>
+                                            <span class="fw-bold text-dark fs-6">@p.Price.ToString("N2") ₺</span>
                                             break;
 
                                         case "Action":
                                             if (p.StockQuantity > 0)
                                             {
-                                                <div class="d-flex align-items-center justify-content-center gap-2">
-                                                    <input type="number" id="qty_@p.Id" value="1" min="1" max="@p.StockQuantity" class="form-control form-control-sm text-center" style="width: 70px;" />
-                                                    <button type="button" onclick="addToCart(@p.Id)" class="btn btn-sm btn-success">
-                                                        Sepete Ekle
+                                                <div class="d-flex align-items-center justify-content-center gap-1">
+                                                    <input type="number" id="qty_@p.Id" value="1" min="1" max="@p.StockQuantity" class="form-control form-control-sm text-center" style="width: 60px;" />
+                                                    <button type="button" onclick="addToCart(@p.Id)" class="btn btn-sm btn-primary px-2 py-1 fw-semibold">
+                                                        Ekle
                                                     </button>
                                                 </div>
                                             }
                                             else
                                             {
-                                                <button class="btn btn-sm btn-secondary" disabled>Stok Yok</button>
+                                                <button class="btn btn-sm btn-light border text-muted" disabled>Tükendi</button>
                                             }
                                             break;
 
@@ -169,36 +218,130 @@
     </div>
 </div>
 
-<!-- Sepete Ekleme JavaScript Kodu -->
+<!-- 🎯 ŞARTNAME MADDE 6: ÜRÜN DETAY MODALI (POPUP) -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-header bg-light border-bottom">
+                <h5 class="modal-title fw-bold text-dark" id="modalProdTitle">Ürün Detayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-5 text-center">
+                        <img id="modalProdImg" src="" alt="" class="img-fluid rounded-3 border shadow-xs" style="max-height: 260px; object-fit: cover; width: 100%;" />
+                    </div>
+                    <div class="col-md-7">
+                        <h4 class="fw-bold text-dark mb-1" id="modalProdName"></h4>
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark border font-monospace me-1" id="modalProdCode"></span>
+                            <span class="badge bg-secondary" id="modalProdBrand"></span>
+                            <span class="badge text-white" style="background-color: #3d434a;" id="modalProdCat"></span>
+                        </div>
+
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-secondary small">Fiyat:</span>
+                                <span class="fs-4 fw-bold text-primary" id="modalProdPrice"></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary small">Mevcut Stok:</span>
+                                <span class="fw-bold text-dark" id="modalProdStock"></span>
+                            </div>
+                        </div>
+
+                        <div class="small mb-3">
+                            <div class="text-secondary fw-semibold mb-1">Açıklama:</div>
+                            <div id="modalProdDesc" class="text-muted"></div>
+                        </div>
+
+                        <!-- Şartname Ek Kodları -->
+                        <div class="row g-2 border-top pt-2 small text-secondary">
+                            <div class="col-4">
+                                <strong>Üretici Kodu:</strong>
+                                <div id="modalProdManCode" class="text-dark font-monospace">-</div>
+                            </div>
+                            <div class="col-4">
+                                <strong>Özel Kod 1:</strong>
+                                <div id="modalProdSpec1" class="text-dark font-monospace">-</div>
+                            </div>
+                            <div class="col-4">
+                                <strong>Özel Kod 2:</strong>
+                                <div id="modalProdSpec2" class="text-dark font-monospace">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sepete Ekleme ve Detay Modal JS -->
 <script>
+    function showNotification(message, isSuccess = true) {
+        let alertBox = document.getElementById('cartMiniAlert');
+        if (!alertBox) {
+            alertBox = document.createElement('div');
+            alertBox.id = 'cartMiniAlert';
+            alertBox.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 99999; padding: 12px 20px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: opacity 0.3s ease;';
+            document.body.appendChild(alertBox);
+        }
+        alertBox.style.background = isSuccess ? '#1e3a8a' : '#dc3545';
+        alertBox.style.color = '#ffffff';
+        alertBox.innerText = (isSuccess ? '✅ ' : '⚠️ ') + message;
+        alertBox.style.opacity = '1';
+        setTimeout(() => { alertBox.style.opacity = '0'; }, 2200);
+    }
+
     function addToCart(productId) {
         const qtyInput = document.getElementById('qty_' + productId);
-        const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
-        const alertBox = document.getElementById('alertBox');
+        const quantity = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
 
-        fetch('/Home/AddToCart', {
+        fetch('/Cart/AddToCart', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `productId=${productId}&quantity=${quantity}`
         })
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            alertBox.classList.remove('d-none', 'alert-success', 'alert-danger');
             if (data.success) {
-                alertBox.classList.add('alert-success');
-                alertBox.innerText = '✅ ' + data.message;
+                showNotification(data.message || 'Ürün sepete eklendi!', true);
+                const badge = document.getElementById('cartBadge');
+                if (badge && data.cartCount !== undefined) {
+                    badge.innerText = data.cartCount;
+                    badge.classList.remove('d-none');
+                    badge.style.display = 'inline-block';
+                }
             } else {
-                alertBox.classList.add('alert-danger');
-                alertBox.innerText = '❌ ' + data.message;
+                showNotification(data.message || 'Ürün sepete eklenemedi!', false);
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { alertBox.classList.add('d-none'); }, 4000);
         })
         .catch(err => {
             console.error(err);
-            alert('Bir hata oluştu!');
+            showNotification('İşlem sırasında bir hata oluştu.', false);
         });
+    }
+
+    // Ürün Detay Modalı Doldur ve Aç
+    function openProductModal(id, name, code, brand, cat, price, stock, desc, manCode, spec1, spec2, img) {
+        document.getElementById('modalProdTitle').innerText = name;
+        document.getElementById('modalProdName').innerText = name;
+        document.getElementById('modalProdCode').innerText = code;
+        document.getElementById('modalProdBrand').innerText = brand;
+        document.getElementById('modalProdCat').innerText = cat;
+        document.getElementById('modalProdPrice').innerText = price + ' ₺';
+        document.getElementById('modalProdStock').innerText = stock + ' Adet';
+        document.getElementById('modalProdDesc').innerText = desc;
+        document.getElementById('modalProdManCode').innerText = manCode;
+        document.getElementById('modalProdSpec1').innerText = spec1;
+        document.getElementById('modalProdSpec2').innerText = spec2;
+        document.getElementById('modalProdImg').src = img || 'https://via.placeholder.com/300';
+
+        const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+        modal.show();
     }
 </script>

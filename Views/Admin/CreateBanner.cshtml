@@ -1,0 +1,75 @@
+﻿@model MiniB2B.Web.Models.Banner
+@{
+    ViewData["Title"] = "Yeni Kampanya İlanı Ekle";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">➕ Yeni Kampanya İlanı Ekle</h2>
+                    <p class="text-muted mb-0">Bayi ana sayfasındaki kayan slider'a yeni bir reklam ekleyin.</p>
+                </div>
+                <a href="/Admin/Banners" class="btn btn-outline-secondary">← Listeye Dön</a>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 rounded-4">
+                <form method="post" asp-action="CreateBanner">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Kampanya Başlığı *</label>
+                            <input type="text" name="Title" class="form-control" placeholder="Örn: Kablo Gruplarında Dev İndirim" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Gösterim Sırası</label>
+                            <input type="number" name="DisplayOrder" class="form-control" value="1" min="1" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Kampanya Açıklaması</label>
+                            <textarea name="Description" class="form-control" rows="2" placeholder="Örn: 50.000 TL üzeri tüm siparişlerde geçerli %10 net iskonto avantajı."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Üst Rozet Metni</label>
+                            <input type="text" name="BadgeText" class="form-control" value="ÖZEL FIRSAT" placeholder="Örn: YENİ ÜRÜN" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Rozet Rengi</label>
+                            <select name="BadgeColor" class="form-select">
+                                <option value="warning" class="text-warning fw-bold">Sarı (Warning)</option>
+                                <option value="success" class="text-success fw-bold">Yeşil (Success)</option>
+                                <option value="danger" class="text-danger fw-bold">Kırmızı (Danger)</option>
+                                <option value="info" class="text-info fw-bold">Mavi (Info)</option>
+                                <option value="dark" class="text-dark fw-bold">Siyah (Dark)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Arka Plan Rengi / Gradyan (CSS)</label>
+                            <select name="BackgroundGradient" class="form-select">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Kampanya / Ürün Görsel Linki (Resim URL)</label>
+                                    <input type="url" name="ImageUrl" class="form-control" placeholder="https://ornek.com/kampanya-gorseli.jpg" />
+                                    <small class="text-muted">Afişin sağında sergilenecek ürün veya kampanya resminin web bağlantısı.</small>
+                                </div>
+                                <option value="linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)">Mavi Gece (Klasik Kurumsal)</option>
+                                <option value="linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)">Zümrüt Koyu Yeşil</option>
+                                <option value="linear-gradient(135deg, #b92b27 0%, #1565C0 100%)">Alev Kırmızısı - Mavi</option>
+                                <option value="linear-gradient(135deg, #373b44 0%, #4286f4 100%)">Metalik Antrasit</option>
+                                <option value="linear-gradient(135deg, #11998e 0%, #38ef7d 100%)">Canlı Doğa Yeşili</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">
+                                🚀 İlanı Yayınla
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

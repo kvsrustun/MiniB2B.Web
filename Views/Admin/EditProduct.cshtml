@@ -1,0 +1,109 @@
+﻿@model MiniB2B.Web.Models.Product
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+    var categories = ViewBag.Categories as List<MiniB2B.Web.Models.Category> ?? new List<MiniB2B.Web.Models.Category>();
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary mb-1">Ürün Yönetimi</span>
+                    <h3 class="fw-bold mb-0 text-dark">✏️ Ürün Düzenle: @Model.Name</h3>
+                </div>
+                <a href="/Admin/Products" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Listeye Dön
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom p-4">
+                    <h5 class="fw-bold mb-0 text-secondary">Genel ve Özel Bilgiler</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" asp-action="EditProduct">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-secondary">Ürün Kodu *</label>
+                                <input type="text" name="ProductCode" value="@Model.ProductCode" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-secondary">Marka *</label>
+                                <input type="text" name="Brand" value="@Model.Brand" class="form-control" required />
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-secondary">Ürün Adı *</label>
+                                <input type="text" name="Name" value="@Model.Name" class="form-control" required />
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-secondary">Ürün Açıklaması</label>
+                                <textarea name="Description" class="form-control" rows="3" placeholder="Ürün detaylı özellikleri ve kullanım alanları...">@Model.Description</textarea>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <div class="fw-bold text-dark mb-2 small text-uppercase">
+                                        <i class="bi bi-tag-fill text-primary me-1"></i> Özel B2B & ERP Kodlama Alanları
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold small text-secondary">Üretici Kodu</label>
+                                            <input type="text" name="ManufacturerCode" value="@Model.ManufacturerCode" class="form-control bg-white" placeholder="Örn: MF-6204" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold small text-secondary">Özel Kod 1</label>
+                                            <input type="text" name="SpecialCode1" value="@Model.SpecialCode1" class="form-control bg-white" placeholder="Örn: OZEL-A" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold small text-secondary">Özel Kod 2</label>
+                                            <input type="text" name="SpecialCode2" value="@Model.SpecialCode2" class="form-control bg-white" placeholder="Örn: KAT-1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mt-4">
+                                <label class="form-label fw-semibold small text-secondary">Kategori *</label>
+                                <select name="CategoryId" class="form-select" required>
+                                    @foreach (var cat in categories)
+                                    {
+                                        <option value="@cat.Id" selected="@(Model.CategoryId == cat.Id)">@cat.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-4">
+                                <label class="form-label fw-semibold small text-secondary">Birim Fiyat (₺) *</label>
+                                <input type="number" step="0.01" name="Price" value="@Model.Price" class="form-control" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-secondary">Mevcut Stok Miktarı *</label>
+                                <input type="number" name="StockQuantity" value="@Model.StockQuantity" class="form-control" min="0" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-secondary">Kritik Stok Eşiği *</label>
+                                <input type="number" name="CriticalStockThreshold" value="@Model.CriticalStockThreshold" class="form-control" min="1" required />
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small text-secondary">Görsel URL</label>
+                                <input type="text" name="ImageUrl" value="@Model.ImageUrl" class="form-control" placeholder="https://..." />
+                            </div>
+
+                            <div class="col-12 mt-4 pt-2">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                                    💾 Değişiklikleri Kaydet ve Güncelle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
