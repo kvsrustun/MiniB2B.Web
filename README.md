@@ -15,6 +15,7 @@ Proje, kurumsal yazılım geliştirme standartlarına uygun olarak **.NET 8 MVC*
 6. [Adım Adım Kurulum ve Çalıştırma Rehberi](#-adım-adım-kurulum-ve-çalıştırma-rehberi)
 7. [Veritabanı Şeması ve Tablo Yapısı](#-veritabanı-şeması-ve-tablo-yapısı)
 8. [Güvenlik ve Validasyon Yaklaşımı](#-güvenlik-ve-validasyon-yaklaşımı)
+9. [Uygulama Ekran Görüntüleri](#-uygulama-ekran-görüntüleri)
 
 ---
 
@@ -151,3 +152,51 @@ SQL Server'da hiçbir tablo olmasa dahi proje ilk çalıştırmada kendi veritab
 4. **Yetkilendirme Güvenliği (Authorization Filter):** `AdminController` üzerinde çalışan global filtre ile yetkisiz veya oturumsuz kullanıcıların URL manipülasyonuyla yönetim paneline girmesi engellenir.
 5. **IDOR Koruması:** Sipariş listeleme ve detay sorgularında kullanıcı kimlik doğrulaması yapılarak hiçbir bayinin başka bir bayiye ait siparişi görmesine izin verilmez.
 6. **Security Headers:** Clickjacking ve MIME-sniffing saldırılarına karşı `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff` başlıkları HTTP yanıtlarına eklenmiştir.
+
+---
+
+## 📸 Uygulama Ekran Görüntüleri
+
+### 1. Bayi Ürün Kataloğu ve Detay Popup İnceleme
+Bayilerin dinamik grid tablosundan ürünleri filtreleyebildiği, adet girerek hızlı sipariş verebildiği ve ürünün tüm ERP kodlarını (Üretici Kodu, Özel Kodlar vb.) inceleyebildiği detay ekranı:
+
+<img width="1600" height="848" alt="WhatsApp Image 2026-09-19 at 02 12 14" src="https://github.com/user-attachments/assets/a992e23a-170a-41a8-84db-ff2f46abfda4" />
+
+
+---
+
+### 2. Yönetim Paneli - Ana Kontrol Merkezi (Dashboard & Kritik Stok İzleme)
+Yöneticinin sisteme genel bakış sağladığı ana operasyon ekranıdır. Bu ekran üzerinden:
+* **Hızlı Modül Erişimi:** Üst kısımdaki 5 ana yönetim modülüne (`Ürün Yönetimi`, `Kullanıcı Yönetimi`, `İlan & Slider Yönetimi`, `Kolon Ayarları`, `Tüm Siparişler`) doğrudan geçiş yapılabilir.
+* **Canlı İstatistik Kartları:** Toplam ürün sayısı, kritik/tükenen stok adedi, toplam sipariş sayısı ve portala yansıyan toplam sipariş tutarı (ciro) anlık olarak izlenir.
+* **Hızlı Stok Müdahalesi:** Stoğu kritik eşiğin altına düşen veya tükenen ürünler özel alarm listesinde listelenir; ürün detayına girmeden doğrudan bu tablo üzerinden yeni stok ve kritik eşik miktarı girilip tek tıkla kaydedilebilir.
+
+<img width="1917" height="1021" alt="Ekran görüntüsü 2026-09-19 163202" src="https://github.com/user-attachments/assets/6455a7a8-c9f6-49ca-b962-4f61171e55fc" />
+
+
+---
+
+### 3. Yönetim Paneli - Sipariş Listesi ve Sipariş Detay İnceleme
+Yöneticinin bayilerden gelen tüm siparişleri listelediği; sipariş kalemlerini, adetleri ve sipariş anında kaydedilen birim fiyat (Snapshot) değerlerini inceleyebildiği detay popup ekranı:
+
+<img width="1600" height="851" alt="3" src="https://github.com/user-attachments/assets/5665f1fe-c9a8-4a47-8254-5d65fcf4ad93" />
+
+
+
+---
+
+### 4. Sipariş Yönetimi ve Anlık Fiyat (Snapshot) Koruması
+Yöneticinin siparişleri onaylayıp reddedebildiği, sipariş anındaki ürün bilgilerini ve mühürlenmiş birim fiyat (Snapshot) değerlerini incelediği sipariş detay ekranı:
+
+<img width="1600" height="842" alt="4" src="https://github.com/user-attachments/assets/9b07610a-77b0-4349-91ed-edbeef104fca" />
+
+
+
+---
+
+### 5. Bayi Geçmiş Siparişlerim ve Sevkiyat Takibi
+Bayinin vermiş olduğu tüm siparişleri, onay/hazırlanıyor/red durumlarını ve toplam fatura tutarlarını anlık olarak izleyebildiği takip ekranı:
+
+<img width="1600" height="839" alt="5" src="https://github.com/user-attachments/assets/2b664142-b0a8-40ce-ad1c-2551fe71cfb8" />
+
+
